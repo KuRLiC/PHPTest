@@ -29,6 +29,8 @@ class ProductController extends Controller
    */
   public function actionCreate()
   {
+    $productTags = (isset ( $_REQUEST ['tagsArray'] ) && is_array ( $_REQUEST ['tagsArray'] )) ? $_REQUEST ['tagsArray'] : array ();
+    
     $model = new Product ();
     
     // Uncomment the following line if AJAX validation is needed
@@ -36,23 +38,29 @@ class ProductController extends Controller
     
     if (isset ( $_POST ['Product'] ))
     {
-      $model->attributes = $_POST ['Product'];
-      $file = CUploadedFile::getInstance ( $model, 'image' );
-      if ($file != null)
-      {
-        $model->image = uniqid ( 'product_' ) . '.' . $file->getExtensionName ();
-        if ($model->save ())
-        {
-          $file->saveAs ( $model->imagePath );
-          $this->redirect ( array (
-              'view',
-              'id' => $model->id 
-          ) );
-        }
-      }
+      if (count ( $productTags ) <= 0)
+        $model->addError ( '', 'At least one tag is required' );
       else
       {
-        $model->addError ( 'image', 'Required' );
+        $model->attributes = $_POST ['Product'];
+        $file = CUploadedFile::getInstance ( $model, 'image' );
+        if ($file != null)
+        {
+          $model->image = uniqid ( 'product_' ) . '.' . $file->getExtensionName ();
+          if ($model->save ())
+          {
+            $model->tagsArray = $productTags;
+            $file->saveAs ( $model->imagePath );
+            $this->redirect ( array (
+                'view',
+                'id' => $model->id 
+            ) );
+          }
+        }
+        else
+        {
+          $model->addError ( 'image', 'Required' );
+        }
       }
     }
     else
@@ -80,6 +88,8 @@ class ProductController extends Controller
    */
   public function actionEdit($id)
   {
+    $productTags = (isset ( $_REQUEST ['tagsArray'] ) && is_array ( $_REQUEST ['tagsArray'] )) ? $_REQUEST ['tagsArray'] : array ();
+    
     $model = $this->loadModel ( $id );
     
     // Uncomment the following line if AJAX validation is needed
@@ -87,33 +97,39 @@ class ProductController extends Controller
     
     if (isset ( $_POST ['Product'] ))
     {
-      $oldImage = $model->image;
-      $oldPath = $model->imagePath;
-      $model->attributes = $_POST ['Product'];
-      $file = CUploadedFile::getInstance ( $model, 'image' );
-      if ($file != null)
-      {
-        $model->image = uniqid ( 'product_' ) . '.' . $file->getExtensionName ();
-      }
+      if (count ( $productTags ) <= 0)
+        $model->addError ( '', 'At least one tag is required' );
       else
       {
-        $model->image = $oldImage;
-      }
-      
-      if ($model->save ())
-      {
+        $oldImage = $model->image;
+        $oldPath = $model->imagePath;
+        $model->attributes = $_POST ['Product'];
+        $file = CUploadedFile::getInstance ( $model, 'image' );
         if ($file != null)
         {
-          $file->saveAs ( $model->imagePath );
-          if (file_exists ( $oldPath ) && is_file ( $oldPath ))
-          {
-            unlink ( $oldPath );
-          }
+          $model->image = uniqid ( 'product_' ) . '.' . $file->getExtensionName ();
         }
-        $this->redirect ( array (
-            'view',
-            'id' => $model->id 
-        ) );
+        else
+        {
+          $model->image = $oldImage;
+        }
+        
+        if ($model->save ())
+        {
+          $model->tagsArray = $productTags;
+          if ($file != null)
+          {
+            $file->saveAs ( $model->imagePath );
+            if (file_exists ( $oldPath ) && is_file ( $oldPath ))
+            {
+              unlink ( $oldPath );
+            }
+          }
+          $this->redirect ( array (
+              'view',
+              'id' => $model->id 
+          ) );
+        }
       }
     }
     else
@@ -143,6 +159,9 @@ class ProductController extends Controller
       $model = $this->loadModel ( $id );
       if ($model->imageExists)
         unlink ( $model->imagePath );
+      ProductTag::model ()->deleteAll ( 'product=:p', array (
+          ':p' => $model->id 
+      ) );
       $model->delete ();
       
       // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser

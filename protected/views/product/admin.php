@@ -44,7 +44,6 @@ $this->widget ( 'bootstrap.widgets.TbGridView', array (
             'value' => '$data->getImageTag(100)',
             'filter' => false 
         ),
-        // array('name'=>'productsTags','type'=>'html','value'=>'implode$data->productsTags
         array (
             'class' => 'bootstrap.widgets.TbButtonColumn',
             'buttons' => array (

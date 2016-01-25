@@ -16,12 +16,81 @@
  * @property string $imageUrl
  * @property string $productUrl
  * @property string $productEditUrl
+ * 
+ * @property string[] $tagsArray
  *
  * The followings are the available model relations:
+ * @property Tag[] $tags
  * @property ProductsTags[] $productsTags
  */
 class Product extends CActiveRecord
 {
+
+  public function setTagsArray(array $data)
+  {
+    // reset dei tag per semplificare lo script
+    ProductTag::model ()->deleteAll ( 'product=:p', array (
+        ':p' => $this->id 
+    ) );
+    // data attuale
+    $now = new DateTime ();
+    $timestamp = $now->format ( 'Y-m-d H-i-s' );
+    // ricerca dei tag e creazione dei link
+    foreach ( $data as $tagName )
+    {
+      $tag = Tag::model ()->find ( 'name=:nm', array (
+          ':nm' => $tagName 
+      ) );
+      /** @var Tag $tag */
+      if ($tag == null)
+      {
+        $tag = new Tag ();
+        $tag->name = $tagName;
+        $tag->description = ucwords ( $tagName );
+        $tag->timestamp = $timestamp;
+        $tag->insert ();
+      }
+      $productTag = ProductTag::model ()->find ( 'product=:p AND tag=:t', array (
+          ':p' => $this->id,
+          ':t' => $tag->id 
+      ) );
+      /** @var ProductTag $productTag */
+      if ($productTag == null)
+      {
+        $productTag = new ProductTag ();
+        $productTag->product = $this->id;
+        $productTag->tag = $tag->id;
+        $productTag->insert ();
+      }
+    }
+  }
+
+  /**
+   *
+   * @return string[]
+   */
+  public function getTagsArray()
+  {
+    $data = array ();
+    foreach ( $this->tags as $tag )
+    {
+      /** @var Tag $tag */
+      $data [$tag->id] = $tag->name;
+    }
+    return $data;
+  }
+
+  /**
+   *
+   * @return string
+   */
+  public function getTagsHtml($echo = false)
+  {
+    $html = "";
+    foreach ( $this->tags as $tag )
+      $html .= print_product_tag ( $tag->name, $echo );
+    return $html;
+  }
 
   /**
    *
@@ -156,6 +225,11 @@ class Product extends CActiveRecord
             self::HAS_MANY,
             'ProductsTags',
             'product' 
+        ),
+        'tags' => array (
+            self::MANY_MANY,
+            'Tag',
+            'products_tags(product, tag)' 
         ) 
     );
   }
@@ -201,6 +275,11 @@ class Product extends CActiveRecord
     return new CActiveDataProvider ( $this, array (
         'criteria' => $criteria 
     ) );
+  }
+
+  public function __toString()
+  {
+    return $this->name;
   }
 
   /**

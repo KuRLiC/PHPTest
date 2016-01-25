@@ -56,10 +56,19 @@ $this->widget ( 'bootstrap.widgets.TbDetailView', array (
         'description',
         'timestamp' 
     ) 
-)
+) )
 // 'image',
 
- );
+;
+
+$tags = $model->tags;
+/** @var Tag[] $tags */
+if (is_array ( $tags ))
+{
+  $model->getTagsHtml(true);
+  echo ("<br/>");
+  echo ("<br/>");
+}
 
 if (! $model->isNewRecord && $model->imageExists)
 {

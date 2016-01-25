@@ -29,6 +29,23 @@ function debug_objs()
   return debug_obj ( func_get_args () );
 }
 
+function print_product_tag($tag, $echo = true)
+{
+  $style = "
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 3px 3px;
+    padding: 2px 6px;
+    background: #1da7ee;
+    color: #ffffff;
+    border: 1px solid #0073bb;
+  ";
+  $html = "<span style=\"{$style}\">{$tag}</span> ";
+  if ($echo)
+    echo $html;
+  return $html;
+}
+
 /**
  * any var to string
  *

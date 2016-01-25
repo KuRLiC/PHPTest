@@ -17,18 +17,43 @@ $form = $this->beginWidget ( 'bootstrap.widgets.TbActiveForm', array (
 <p class="help-block">
   Fields with <span class="required">*</span> are required.
 </p>
-
-<?php echo $form->errorSummary($model); ?>
-
-<?php echo $form->textFieldRow($model,'name',array('class'=>'span5')); ?><br />
-
-<?php echo $form->textAreaRow($model,'description',array('class'=>'span5')); ?><br />
-
-<?php echo $form->textFieldRow($model,'timestamp',array('class'=>'span5', 'readonly'=>'readonly')); ?><br />
-
-<?php echo $form->fileFieldRow($model,'image',array('class'=>'span5', 'readonly'=>'readonly')); ?><br />
-
 <?php
+echo $form->errorSummary ( $model );
+
+echo $form->textFieldRow ( $model, 'name', array (
+    'class' => 'span5' 
+) );
+echo "<br />";
+
+echo $form->textAreaRow ( $model, 'description', array (
+    'class' => 'span5' 
+) );
+echo "<br />";
+
+echo $form->textFieldRow ( $model, 'timestamp', array (
+    'class' => 'span5',
+    'readonly' => 'readonly' 
+) );
+echo "<br />";
+
+echo $form->fileFieldRow ( $model, 'image', array (
+    'class' => 'span5',
+    'readonly' => 'readonly' 
+) );
+echo "<br />";
+echo "<br />";
+
+echo CHtml::label ( 'Tags', 'tagsArray' );
+$this->widget ( 'ext.yii-selectize.YiiSelectize', array (
+    'id' => 'tagsArray',
+    'name' => 'tagsArray',
+    'value' => '',
+    'data' => Tag::getAllArrayNames (),
+    'selectedValues' => $model->tagsArray,
+    'fullWidth' => true,
+    'multiple' => true 
+) );
+
 if (! $model->isNewRecord && $model->imageExists)
 {
   echo ($model->imageTag);
