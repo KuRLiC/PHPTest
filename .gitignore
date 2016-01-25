@@ -1,1 +1,5 @@
 /assets/*
+# eclipse files & folders
+.project
+.settings
+.buildpath

@@ -1,11 +1,22 @@
 <?php
-$this->breadcrumbs=array(
-	'Products'=>array('index'),
-	'Create',
+/**
+ * @var ProductController $this
+ * @var Product $model
+ */
+$this->breadcrumbs = array (
+    'Products' => array (
+        'list' 
+    ),
+    'Create' 
 );
 
-$this->menu=array(
-	array('label'=>'List Product','url'=>array('list')),
+$this->menu = array (
+    array (
+        'label' => 'List Product',
+        'url' => array (
+            'list' 
+        ) 
+    ) 
 );
 ?>
 
