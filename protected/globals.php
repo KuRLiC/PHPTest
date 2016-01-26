@@ -8,6 +8,15 @@ function yii_app()
   return Yii::app ();
 }
 
+/**
+ * return the current route
+ * @return string
+ */
+function yii_route()
+{
+  return yii_app ()->controller->id . '/' . yii_app ()->controller->action->id;
+}
+
 function url($route, array $params = array())
 {
   return yii_app ()->createUrl ( $route, $params );

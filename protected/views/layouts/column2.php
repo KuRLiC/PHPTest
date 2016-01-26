@@ -19,7 +19,8 @@
                 'class' => 'operations' 
             ) 
         ) );
-        $this->endWidget ();        
+        $this->endWidget ();
+
         ?>
         </div>
     <!-- sidebar -->

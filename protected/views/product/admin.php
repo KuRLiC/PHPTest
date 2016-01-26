@@ -1,4 +1,6 @@
 <?php
+/** @var ProductController $this */
+/** @var Product $model */
 $this->breadcrumbs = array (
     'Products' => array (
         'list' 
@@ -20,6 +22,8 @@ $this->menu = array (
 <h1>Manage Products</h1>
 
 <?php
+
+$this->renderPartial ( '/shared/_tags' );
 
 $this->widget ( 'bootstrap.widgets.TbGridView', array (
     'id' => 'product-grid',

@@ -26,6 +26,8 @@
 class Product extends CActiveRecord
 {
 
+  public $searchTag = null;
+
   public function setTagsArray(array $data)
   {
     // reset dei tag per semplificare lo script
@@ -271,6 +273,19 @@ class Product extends CActiveRecord
     $criteria->compare ( 'description', $this->description, true );
     $criteria->compare ( 'timestamp', $this->timestamp );
     $criteria->compare ( 'image', $this->image, true );
+    
+    if (! empty ( $this->searchTag ))
+    {
+      $criteria->with = array (
+          'tags' => array (
+              'alias' => 'tgs',
+              'together' => true 
+          ) 
+      );
+      
+      $criteria->compare ( "tgs.name", $this->searchTag );
+      // $criteria->together = true;
+    }
     
     return new CActiveDataProvider ( $this, array (
         'criteria' => $criteria 

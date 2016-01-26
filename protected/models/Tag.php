@@ -64,6 +64,16 @@ class Tag extends CActiveRecord
     // NOTE: you may need to adjust the relation name and the related
     // class name for the relations automatically generated below.
     return array (
+        'products' => array (
+            self::MANY_MANY,
+            'Product',
+            'products_tags(tag, product)'
+        ),
+        'productsCount' => array (
+            self::STAT,
+            'Product',
+            'products_tags(tag, product)'
+        ),
         'productsTags' => array (
             self::HAS_MANY,
             'ProductTag',

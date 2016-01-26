@@ -33,9 +33,10 @@ class ProductController extends Controller
     
     $model = new Product ();
     
-    // Uncomment the following line if AJAX validation is needed
-    // $this->performAjaxValidation($model);
-    
+    // aggiorno la data di creazione ogni volta
+    $now = new DateTime ();
+    $model->timestamp = $now->format ( 'Y-m-d H-i-s' );
+        
     if (isset ( $_POST ['Product'] ))
     {
       if (count ( $productTags ) <= 0)
@@ -63,11 +64,6 @@ class ProductController extends Controller
         }
       }
     }
-    else
-    {
-      $now = new DateTime ();
-      $model->timestamp = $now->format ( 'Y-m-d H-i-s' );
-    }
     
     $this->render ( 'create', array (
         'model' => $model 
@@ -91,9 +87,10 @@ class ProductController extends Controller
     $productTags = (isset ( $_REQUEST ['tagsArray'] ) && is_array ( $_REQUEST ['tagsArray'] )) ? $_REQUEST ['tagsArray'] : array ();
     
     $model = $this->loadModel ( $id );
-    
-    // Uncomment the following line if AJAX validation is needed
-    // $this->performAjaxValidation($model);
+
+    // aggiorno la data di creazione ogni volta
+    $now = new DateTime ();
+    $model->timestamp = $now->format ( 'Y-m-d H-i-s' );
     
     if (isset ( $_POST ['Product'] ))
     {
@@ -179,7 +176,7 @@ class ProductController extends Controller
    */
   public function actionIndex()
   {
-    $this->redirectTo ( 'product/list' );
+    $this->redirectTo ( 'product/list', $_GET );
   }
 
   /**
@@ -187,7 +184,7 @@ class ProductController extends Controller
    */
   public function actionAdmin()
   {
-    $this->redirectTo ( 'product/list' );
+    $this->redirectTo ( 'product/list', $_GET );
   }
 
   /**
@@ -199,6 +196,9 @@ class ProductController extends Controller
     $model->unsetAttributes (); // clear any default values
     if (isset ( $_GET ['Product'] ))
       $model->attributes = $_GET ['Product'];
+    
+    if (isset ( $_REQUEST ['tag'] ) && ! empty ( $_REQUEST ['tag'] ))
+      $model->searchTag = $_REQUEST ['tag'];
     
     $this->render ( 'admin', array (
         'model' => $model 
